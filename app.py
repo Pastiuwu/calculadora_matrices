@@ -3,10 +3,10 @@ from fractions import Fraction
 
 app = Flask(__name__)
 
-#globales
+# globales
 
 def sumar_matrices(a, b):
-    return [[a[i][j] + b[i][j] for j in range(len(a[0]))] for i in range(len(a))]
+    return [[a[i][j] + b[i][j] for j in range(len(a[0]))] for i in range(len(a))] #range = secuencia len= elementos
 
 def restar_matrices(a, b):
     return [[a[i][j] - b[i][j] for j in range(len(a[0]))] for i in range(len(a))]
@@ -32,7 +32,7 @@ def determinante_matriz(m):
     if len(m) != len(m[0]):
         raise ValueError("La matriz no es cuadrada.")
     if len(m) == 2:
-        return m[0][0] * m[1][1] - m[0][1] * m[1][0]  # a x d - b x c
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0]  # formula directa / a x d - b x c
     
     det = 0
     for c in range(len(m)):  # c = indice
@@ -53,13 +53,36 @@ def inversa_matriz(m):
                 [fila[:j] + fila[j+1:] for fila in (m_fracciones[:i] + m_fracciones[i+1:])]) 
                 for j in range(len(m))] for i in range(len(m))]
     
-    # Paso 6: Transponer la matriz adjunta (intercambiar filas y columnas)
     adjunta_transpuesta = transponer_matriz(adjunta)
     
-    # Paso 7: Calcular la matriz inversa dividiendo cada elemento de la adjunta transpuesta por el determinante
+    # calcular la matriz inversa dividiendo cada elemento de la adjunta transpuesta por el determinante
     inversa = [[adjunta_transpuesta[i][j] / Fraction(det) for j in range(len(m))] for i in range(len(m))]
-    
-    # Paso 8: Retornar la matriz inversa
+    return inversa
+
+
+#def gauss_jordan_inversa(m):
+    if len(m) != len(m[0]):
+        raise ValueError("La matriz no es cuadrada.")
+    # matriz aumentada
+    n = len(m)
+    # copia de la matriz
+    m_aumentada = [fila[:] + [1 if i == j else 0 for j in range(n)] for i, fila in enumerate(m)]
+    for i in range(n):
+        # pivote a 1
+        if m_aumentada[i][i] == 0:
+            raise ValueError("La matriz es singular y no tiene inversa.")
+        # dividir la fila
+        pivot = m_aumentada[i][i]
+        for j in range(2 * n):
+            m_aumentada[i][j] /= pivot
+        # convertir en 0 columna 1
+        for j in range(n):
+            if i != j:
+                factor = m_aumentada[j][i]
+                for k in range(2 * n):
+                    m_aumentada[j][k] -= factor * m_aumentada[i][k]
+    # la derecha de la matriz aumentada es ahora la matriz inversa
+    inversa = [fila[n:] for fila in m_aumentada]
     return inversa
 
 def multiplicar_por_dos(m):
@@ -67,6 +90,7 @@ def multiplicar_por_dos(m):
 
 def elevar_al_cuadrado(m):
     return [[elemento ** 2 for elemento in fila] for fila in m]
+
 
 @app.route('/', methods=['GET', 'POST'])
 def inicio():
