@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operaciones con Matrices</title>
+    <!-- Enlace a Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="bg-light py-5">
+    <div class="container">
+        <h1 class="text-center mb-5">Operaciones con Matrices</h1>
+
+        <!-- Mostrar error si existe -->
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Mostrar resultado si existe -->
+        {% if resultado %}
+        <h2 class="text-center">Resultado:</h2>
+        {% if es_determinante %}
+        <div class="alert alert-info" role="alert">
+            {{ resultado }}
+        </div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                {% for fila in resultado %}
+                    <tr>
+                        {% for elemento in fila %}
+                            <td>{{ elemento }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+        {% endif %}
+
+       
+
+            <div class="row">
+                <!-- Columna para la Matriz A -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <form method="post">
+                                <div class="row mb-4">
+                                    <!-- Campos para filas y columnas de la Matriz A -->
+                                    <div class="col-md-6">
+                                        <label for="filas_a" class="form-label">Filas de la Matriz A:</label>
+                                        <input type="number" name="filas_a" id="filas_a" value="{{ filas_a }}" min="1" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="columnas_a" class="form-label">Columnas de la Matriz A:</label>
+                                        <input type="number" name="columnas_a" id="columnas_a" value="{{ columnas_a }}" min="1" class="form-control">
+                                    </div>
+                                </div>
+                                <h3>Matriz A</h3>
+                            </div>
+                            <div class="card-body">
+                                {% for i in range(filas_a) %}
+                                    <div class="row mb-2">
+                                        {% for j in range(columnas_a) %}
+                                            <div class="col-2">
+                                                <input type="number" name="a{{i}}{{j}}" value="{{ matriz_a[i][j] }}" required class="form-control">
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            <div class="mt-3 d-flex justify-content-around">
+                                <button type="submit" name="operacion" value="determinante_a" class="btn btn-primary">Determinante</button>
+                                <button type="submit" name="operacion" value="transponer_a" class="btn btn-secondary">Transponer</button>
+                                <button type="submit" name="operacion" value="inversa_a" class="btn btn-info">Inversa</button>
+                                <button type="submit" name="operacion" value="multiplicar_x2_a" class="btn btn-success">Multiplicar x2</button>
+                                <button type="submit" name="operacion" value="elevar_a2_a" class="btn btn-dark">Elevar al Cuadrado</button>
+                            </div>
+
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna para la Matriz B -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <div class="row mb-4">
+                                <!-- Campos para filas y columnas de la Matriz B -->
+                                <div class="col-md-6">
+                                    <label for="filas_b" class="form-label">Filas de la Matriz B:</label>
+                                    <input type="number" name="filas_b" id="filas_b" value="{{ filas_b }}" min="1" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="columnas_b" class="form-label">Columnas de la Matriz B:</label>
+                                    <input type="number" name="columnas_b" id="columnas_b" value="{{ columnas_b }}" min="1" class="form-control">
+                                </div>
+                            </div>
+                            <h3>Matriz B</h3>
+                        </div>
+                        <div class="card-body">
+                            {% for i in range(filas_b) %}
+                                <div class="row mb-2">
+                                    {% for j in range(columnas_b) %}
+                                        <div class="col">
+                                            <input type="number" name="b{{i}}{{j}}" value="{{ matriz_b[i][j] }}" required class="form-control">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            <div class="mt-3 d-flex justify-content-around">
+                                <button type="submit" name="operacion" value="determinante_b" class="btn btn-primary">Determinante</button>
+                                <button type="submit" name="operacion" value="transponer_b" class="btn btn-secondary">Transponer</button>
+                                <button type="submit" name="operacion" value="inversa_b" class="btn btn-info">Inversa</button>
+                                <button type="submit" name="operacion" value="multiplicar_x2_b" class="btn btn-success">Multiplicar x2</button>
+                                <button type="submit" name="operacion" value="elevar_a2_b" class="btn btn-dark">Elevar al Cuadrado</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selector de operación -->
+            <div class="mt-4 text-center">
+                <label for="operacion" class="form-label">Seleccionar Operación:</label>
+                <select name="operacion" id="operacion" class="form-select w-auto mx-auto">
+                    <option value="sumar">Sumar</option>
+                    <option value="restar">Restar</option>
+                    <option value="multiplicar">Multiplicar</option>
+                </select>
+            </div>
+
+            <!-- Botón de cálculo -->
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary">Calcular</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>
